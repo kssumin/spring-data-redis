@@ -333,7 +333,7 @@ class DefaultReactiveListOperations<K, V> implements ReactiveListOperations<K, V
 	}
 
 	private boolean isZeroOrGreaterOneSecond(Duration timeout) {
-		return timeout.isZero() || timeout.getNano() % TimeUnit.NANOSECONDS.convert(1, TimeUnit.SECONDS) == 0;
+		return timeout.isZero() || timeout.toMillis() >= 1000;
 	}
 
 	private ByteBuffer rawKey(K key) {

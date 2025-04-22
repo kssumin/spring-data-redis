@@ -544,11 +544,24 @@ public class DefaultReactiveListOperationsIntegrationTests<K, V> {
 	}
 
 	@ParameterizedRedisTest // DATAREDIS-602
-	void leftPopWithMillisecondTimeoutShouldFail() {
+	void popWithMillisecondTimeoutShouldWork() {
 
 		K key = keyFactory.instance();
 
-		assertThatIllegalArgumentException().isThrownBy(() -> listOperations.leftPop(key, Duration.ofMillis(1001)));
+		listOperations.leftPop(key, Duration.ofMillis(1001));
+		listOperations.rightPop(key, Duration.ofMillis(1001));
+	}
+
+	@ParameterizedRedisTest // GH-2975
+	void popWithBetweenZeroAndOneSecondTimeoutShouldFail() {
+		K key = keyFactory.instance();
+
+		assertThatIllegalArgumentException().isThrownBy(() ->
+				listOperations.leftPop(key, Duration.ofMillis(500)));
+		assertThatIllegalArgumentException().isThrownBy(() ->
+				listOperations.leftPop(key, Duration.ofMillis(999)));
+		assertThatIllegalArgumentException().isThrownBy(() ->
+				listOperations.rightPop(key, Duration.ofMillis(100)));
 	}
 
 	@ParameterizedRedisTest // DATAREDIS-602
